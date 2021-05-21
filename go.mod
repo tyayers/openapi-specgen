@@ -1,4 +1,4 @@
-module github.com/tyayers/oapi-specgen
+module github.com/tyayers/openapi-specgen
 
 go 1.16
 
