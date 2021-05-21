@@ -1,4 +1,4 @@
-package specgen
+package openapigen
 
 import (
 	"encoding/json"
