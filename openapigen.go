@@ -12,10 +12,10 @@ import (
 )
 
 // Generates a simple OpenAPI spec based on a URL get method call
-func GenerateSpec(getUrl string) string {
-	urlPieces := strings.Split(getUrl, "/")
+func GenerateSpec(url string) string {
+	urlPieces := strings.Split(url, "/")
 	resourceName := urlPieces[len(urlPieces)-1]
-	baseUrl := strings.Replace(getUrl, "/"+resourceName, "", -1)
+	baseUrl := strings.Replace(url, "/"+resourceName, "", -1)
 
 	singularResourceName := resourceName
 	if last := len(singularResourceName) - 1; last >= 0 && singularResourceName[last] == 's' {
@@ -24,7 +24,7 @@ func GenerateSpec(getUrl string) string {
 	singularResourceNameCapitalized := strings.Title(singularResourceName)
 
 	resultSpec := initSpec(resourceName, singularResourceName, singularResourceNameCapitalized, baseUrl)
-	response, err := http.Get(getUrl)
+	response, err := http.Get(url)
 	if err != nil {
 		fmt.Printf("The HTTP request failed with error %s\n", err)
 	} else {
