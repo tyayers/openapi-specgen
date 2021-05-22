@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"os"
 	"strconv"
 	"strings"
 
@@ -14,9 +13,9 @@ import (
 
 // Generates a simple OpenAPI spec based on a URL get method call
 func GenerateSpec(getUrl string) string {
-	urlPieces := strings.Split(os.Args[1], "/")
+	urlPieces := strings.Split(getUrl, "/")
 	resourceName := urlPieces[len(urlPieces)-1]
-	baseUrl := strings.Replace(os.Args[1], "/"+resourceName, "", -1)
+	baseUrl := strings.Replace(getUrl, "/"+resourceName, "", -1)
 
 	singularResourceName := resourceName
 	if last := len(singularResourceName) - 1; last >= 0 && singularResourceName[last] == 's' {
@@ -25,7 +24,7 @@ func GenerateSpec(getUrl string) string {
 	singularResourceNameCapitalized := strings.Title(singularResourceName)
 
 	resultSpec := initSpec(resourceName, singularResourceName, singularResourceNameCapitalized, baseUrl)
-	response, err := http.Get(os.Args[1])
+	response, err := http.Get(getUrl)
 	if err != nil {
 		fmt.Printf("The HTTP request failed with error %s\n", err)
 	} else {
