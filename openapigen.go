@@ -31,25 +31,30 @@ func GenerateSpec(url string) string {
 		data, _ := ioutil.ReadAll(response.Body)
 
 		var result map[string][]map[string]string
+		var resourceArray []map[string]string
 
 		json.Unmarshal([]byte(data), &result)
 
 		if len(result[resourceName]) > 0 {
-			// We have data, now go through properties of first object
-			for key, value := range result[resourceName][0] {
-				//fmt.Println(key, value)
+			resourceArray = result[resourceName]
+		} else {
+			json.Unmarshal([]byte(data), &resourceArray)
+		}
 
-				propType := "string"
+		// We have data, now go through properties of first object
+		for key, value := range resourceArray[0] {
+			//fmt.Println(key, value)
 
-				if _, err := strconv.ParseInt(value, 10, 64); err == nil {
-					propType = "number"
-				}
+			propType := "string"
 
-				resultSpec.Components.Schemas[singularResourceNameCapitalized].Properties[key] = Schema{
-					Description: "The " + key + " of the " + singularResourceNameCapitalized,
-					Type:        propType,
-					Example:     value,
-				}
+			if _, err := strconv.ParseInt(value, 10, 64); err == nil {
+				propType = "number"
+			}
+
+			resultSpec.Components.Schemas[singularResourceNameCapitalized].Properties[key] = Schema{
+				Description: "The " + key + " of the " + singularResourceNameCapitalized,
+				Type:        propType,
+				Example:     value,
 			}
 		}
 	}
