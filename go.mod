@@ -1,5 +1,7 @@
 module github.com/tyayers/openapigen
 
-go 1.16
+go 1.15
 
-require gopkg.in/yaml.v2 v2.4.0
+replace github.com/tyayers/openapigen/openapigenlib => ./openapigenlib
+
+require github.com/tyayers/openapigen/openapigenlib v1.2.0

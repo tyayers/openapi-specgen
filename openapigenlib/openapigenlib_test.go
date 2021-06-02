@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package openapigen
+package openapigenlib
 
 import (
 	"testing"
@@ -30,6 +30,15 @@ func TestTodoAPI(t *testing.T) {
 func TestOrderAPI(t *testing.T) {
 	want := 5833
 	result := GenerateSpec("https://emea-poc13-test.apigee.net/business-objects-api/orders")
+
+	if got := len(result); got != want {
+		t.Errorf("GenerateSpec() length = %d, want %d", got, want)
+	}
+}
+
+func TestRacingAPI(t *testing.T) {
+	want := 5833
+	result := GenerateSpec("https://racingservice-h7pi7igbcq-ew.a.run.app/leaderboard/results/googees")
 
 	if got := len(result); got != want {
 		t.Errorf("GenerateSpec() length = %d, want %d", got, want)
