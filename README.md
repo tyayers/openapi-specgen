@@ -10,7 +10,7 @@ To use in your Go program or library, simply get and import the openapigenlib mo
 go get github.com/tyayers/openapigen/openapigenlib
 ```
 
-Then you can generate OpenAPI specs in your code by calling:
+Then generate an OpenAPI spec in your code by calling:
 
 ```
 spec := openapigenlib.GenerateSpec("https://jsonplaceholder.typicode.com/todos")
