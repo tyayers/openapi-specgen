@@ -30,6 +30,22 @@ func GenerateSpec(url string) string {
 	urlPieces := strings.Split(url, "/")
 	resourceName := urlPieces[len(urlPieces)-1]
 	baseUrl := strings.Replace(url, "/"+resourceName, "", -1)
+	usesApiKey := false
+
+	// Now check for api keys as URL parameters
+	paramPiece := strings.Split(resourceName, "?")
+	if len(paramPiece) > 1 {
+		resourceName = paramPiece[0]
+		params := strings.Split(paramPiece[1], "&")
+		if len(params) > 0 {
+			for i := 0; i < len(params); i++ {
+				paramPieces := strings.Split(params[i], "=")
+				if paramPieces[0] == "apikey" {
+					usesApiKey = true
+				}
+			}
+		}
+	}
 
 	singularResourceName := resourceName
 	if last := len(singularResourceName) - 1; last >= 0 && singularResourceName[last] == 's' {
@@ -71,6 +87,20 @@ func GenerateSpec(url string) string {
 				Description: "The " + key + " of the " + singularResourceNameCapitalized,
 				Type:        propType,
 				Example:     value,
+			}
+		}
+
+		// Set security scheme
+		if usesApiKey {
+			resultSpec.Security = make([]map[string][]string, 1)
+			resultSpec.Security[0] = make(map[string][]string)
+			resultSpec.Security[0]["ApiKeyAuth"] = make([]string, 0)
+
+			resultSpec.Components.SecuritySchemes = make(map[string]SecurityScheme)
+			resultSpec.Components.SecuritySchemes["ApiKeyAuth"] = SecurityScheme{
+				Type: "apiKey",
+				In:   "query",
+				Name: "apikey",
 			}
 		}
 	}
@@ -311,6 +341,7 @@ type OpenApiSchema struct {
 	Openapi    string                   `yaml:"openapi"`
 	Info       SpecInfo                 `yaml:"info"`
 	Servers    []Server                 `yaml:"servers"`
+	Security   []map[string][]string    `yaml:"security"`
 	Paths      map[string]OpsCollection `yaml:"paths"`
 	Components Components               `yaml:"components"`
 }
@@ -383,5 +414,12 @@ type Item struct {
 }
 
 type Components struct {
-	Schemas map[string]Schema `yaml:"schemas"`
+	SecuritySchemes map[string]SecurityScheme `yaml:"securitySchemes"`
+	Schemas         map[string]Schema         `yaml:"schemas"`
+}
+
+type SecurityScheme struct {
+	Type string `yaml:"type"`
+	In   string `yaml:"in"`
+	Name string `yaml:"name"`
 }
